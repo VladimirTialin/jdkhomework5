@@ -2,14 +2,14 @@ package org.example;
 
 import java.util.Random;
 
-public class Philosophers {
+public class Philosophers  implements Runnable{
     private  boolean flag=true;
-    private String name;
+    Life life;
+    String name;
+    int count=0;
 
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
+    public Philosophers(Life eat, String name) {
+        this.life = eat;
         this.name = name;
     }
 
@@ -17,29 +17,30 @@ public class Philosophers {
         return flag;
     }
 
-    public void lunch() {
-        try{
-        Thread.sleep(500);
-        }catch (InterruptedException ex){
-            ex.printStackTrace();
-        }
-
-        System.out.println(getName()+": Обедаю!");
-
-        flag=false;
-
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
     public void thinking(){
         Random rnd =new Random();
         try{
-        Thread.sleep(rnd.nextInt(3000));
+            System.out.printf("%s: Я размышляю....(%d раз)%n",name,count+1);
+            Thread.sleep(rnd.nextInt(2000));
+            flag=!flag;
         }catch (InterruptedException ex)
         {
            ex.printStackTrace();
         }
-        System.out.println(getName()+": Я размышляю....");
 
-        flag=true;
     }
 
+    @Override
+    public void run() {
+        while(count!=3){
+            if(this.flag){
+             life.eat(this);
+             thinking();
+            }
+            count++;
+        }
+    }
 }
